@@ -15,6 +15,7 @@ jobs:
           COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
         run: |
           julia -e '
+          using Pkg
           using CompatHelper
           CompatHelper.main(; registries = [
             Pkg.RegistrySpec(
