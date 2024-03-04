@@ -1,0 +1,13 @@
+name = "MyCompatPkg"
+uuid = "3ed6c5b6-575b-460a-8104-4a88f384643e"
+authors = [""]
+version = "1.0.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
