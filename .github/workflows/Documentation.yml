@@ -39,6 +39,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using MyPublicPkg
-          DocMeta.setdocmeta!(MyPublicPkg, :DocTestSetup, :(using MyPublicPkg); recursive=true)
-          doctest(MyPublicPkg)
+          using MyCompatPkg
+          DocMeta.setdocmeta!(MyCompatPkg, :DocTestSetup, :(using MyCompatPkg); recursive=true)
+          doctest(MyCompatPkg)
