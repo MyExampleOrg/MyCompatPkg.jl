@@ -6,11 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 concurrency:
-  # Skip intermediate builds: always.
-  # Cancel intermediate builds: only if it is a pull request build.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 jobs:
-  coverage:
-    uses: MyExampleOrg/.workflows/.github/workflows/Coverage.yml@master
-    secrets: inherit
+  test:
+    uses: MyExampleOrg/.CI/.github/workflows/Coverage.yml@master
+    
