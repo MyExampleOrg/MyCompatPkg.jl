@@ -4,6 +4,6 @@ on:
     tags: [v*]
   pull_request:
 jobs:
-  test:
+  docs:
     uses: MyExampleOrg/.CI/.github/workflows/Documentation.yml@master
     
