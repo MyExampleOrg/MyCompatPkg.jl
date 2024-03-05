@@ -6,5 +6,10 @@ on:
   workflow_dispatch:
 jobs:
   registry:
-    uses: MyExampleOrg/MyPublicRegistry/.github/workflows/Registry.yml@master
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: MyExampleOrg/.actions/update-registry@master
+        with:
+          token: ${{ secrets.REGISTRATOR_TOKEN_2 }}
+          registry: ${{ vars.PUBLIC_REGISTRY_PATH }}
+          
