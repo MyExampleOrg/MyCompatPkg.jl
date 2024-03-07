@@ -20,4 +20,5 @@ makedocs(;
 deploydocs(;
     repo="github.com/MyExampleOrg/MyCompatPkg.jl",
     devbranch="master",
+    push_preview = true,
 )
