@@ -35,11 +35,11 @@ jobs:
             using LocalRegistry
             using TOML
     
-            name = first(split(basename("$(ENV["REPOSITORY_URL"])"), "."))
+            name = first(split(basename(${{ env.public_registry }}), "."))
     
             LocalRegistry.register(
               name,
-              registry = ENV["REGISTRY_URL"],
+              registry = ${{ env.target_repository }},
               commit = true, push = true,
               ignore_reregistration = true,
             )
@@ -52,7 +52,3 @@ jobs:
             run(`git tag -f "v$version"`)
             run(`git push --force origin "v$version"`)
             '
-        shell: bash
-        env:
-          REGISTRY_URL: ${{ env.public_registry }}
-          REPOSITORY_URL: ${{ env.target_repository }}
