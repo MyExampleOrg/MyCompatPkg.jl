@@ -1,7 +1,7 @@
 name = "MyCompatPkg"
 uuid = "3ed6c5b6-575b-460a-8104-4a88f384643e"
 authors = [""]
-version = "1.0.4"
+version = "1.0.5"
 
 [deps]
 MyPublicPkg = "a6e8d7c3-1fe2-45dc-81fa-a6c45a4fa21b"
