@@ -35,11 +35,11 @@ jobs:
             using LocalRegistry
             using TOML
     
-            name = first(split(basename("${{ env.public_registry }}"), "."))
+            name = first(split(basename("${{ env.target_repository }}"), "."))
     
             LocalRegistry.register(
               name,
-              registry = "${{ env.target_repository }}",
+              registry = "${{ env.public_registry }}",
               commit = true, push = true,
               ignore_reregistration = true,
             )
