@@ -7,21 +7,20 @@ jobs:
   CompatHelper:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure CompatHelper
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/cache@v1
+      - uses: MyExampleOrg/.CI/setup-registry@master
+        with:
+          token: ${{ secrets.token }}
+          registers: MyExampleOrg/MyPublicRegistry
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
-        run: |
+      - run: |
           julia -e '
           using Pkg
           Pkg.add("CompatHelper")
           using CompatHelper
-          CompatHelper.main(; registries = [
-            Pkg.RegistrySpec(
-                url = "https://github.com/JuliaRegistries/General.git",
-            ),
-            Pkg.RegistrySpec(
-                url = "https://github.com/MyExampleOrg/MyPublicRegistry.git",
-            ),
-          ])
+          CompatHelper.main(use_existing_registries = true)
           '
