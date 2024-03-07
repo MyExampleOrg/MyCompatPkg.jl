@@ -12,11 +12,11 @@ jobs:
     name: Update registry
     runs-on: ubuntu-latest
     steps:
-      - name: Configure Git
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq git
-          git config --global user.name github-actions[bot]
-          git config --global user.email github-actions[bot]@users.noreply.github.com
+      # - name: Configure Git
+      #   run: |
+      #     sudo apt-get update -qq && sudo apt-get install -y -qq git
+      #     git config --global user.name github-actions[bot]
+      #     git config --global user.email github-actions[bot]@users.noreply.github.com
       - name: Add registry to environment
         run: |
           julia -e '
@@ -49,6 +49,8 @@ jobs:
             version = VersionNumber(toml["version"])
   
             cd(path)
+            run(`git config --global user.name github-actions[bot]`)
+            run(`git config --global user.email github-actions[bot]@users.noreply.github.com`)
             run(`git tag -f "v$version"`)
             run(`git push --force origin "v$version"`)
             '
