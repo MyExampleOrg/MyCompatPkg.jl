@@ -37,6 +37,8 @@ jobs:
     
             name = first(split(basename("${{ env.target_repository }}"), "."))
     
+            run(`git config --global user.name github-actions[bot]`)
+            run(`git config --global user.email github-actions[bot]@users.noreply.github.com`)
             LocalRegistry.register(
               name,
               registry = "${{ env.public_registry }}",
@@ -49,8 +51,6 @@ jobs:
             version = VersionNumber(toml["version"])
   
             cd(path)
-            run(`git config --global user.name github-actions[bot]`)
-            run(`git config --global user.email github-actions[bot]@users.noreply.github.com`)
             run(`git tag -f "v$version"`)
             run(`git push --force origin "v$version"`)
             '
