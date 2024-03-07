@@ -14,9 +14,6 @@ jobs:
         with:
           token: ${{ github.token  }}
           registers: MyExampleOrg/MyPublicRegistry
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
       - run: |
           julia -e '
           using Pkg
@@ -24,3 +21,6 @@ jobs:
           using CompatHelper
           CompatHelper.main(use_existing_registries = true)
           '
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
