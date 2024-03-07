@@ -30,7 +30,7 @@ jobs:
           julia -e '
             using Pkg
             Pkg.update()
-            Pkg.develop(url = ENV["REPOSITORY_URL"])
+            Pkg.develop(url = "${{ env.target_repository }}")
             Pkg.add("LocalRegistry")
             using LocalRegistry
             using TOML
