@@ -12,11 +12,11 @@ jobs:
     name: Update registry
     runs-on: ubuntu-latest
     steps:
-      # - name: Configure Git
-      #   run: |
-      #     sudo apt-get update -qq && sudo apt-get install -y -qq git
-      #     git config --global user.name github-actions[bot]
-      #     git config --global user.email github-actions[bot]@users.noreply.github.com
+      - name: Configure Git
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq git
+          git config --global user.name github-actions[bot]
+          git config --global user.email github-actions[bot]@users.noreply.github.com
       - name: Add registry to environment
         run: |
           julia -e '
@@ -36,9 +36,7 @@ jobs:
             using TOML
     
             name = first(split(basename("${{ env.target_repository }}"), "."))
-    
-            run(`git config --global user.name github-actions[bot]`)
-            run(`git config --global user.email github-actions[bot]@users.noreply.github.com`)
+
             LocalRegistry.register(
               name,
               registry = "${{ env.public_registry }}",
