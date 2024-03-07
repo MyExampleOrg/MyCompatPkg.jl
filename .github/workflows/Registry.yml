@@ -1,6 +1,6 @@
 name: Update registry
 env:
-  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/${{ github.repository }}.git"
+  target_repository: "https://${{ github.token }}@github.com/${{ github.repository }}.git"
   public_registry: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/MyExampleOrg/MyPublicRegistry.git"
 on:
   push:
