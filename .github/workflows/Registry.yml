@@ -1,4 +1,7 @@
-name: Update public registry
+name: Update registry
+env:
+  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/${{ github.repository }}.git"
+  public_registry: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/MyExampleOrg/MyPublicRegistry.git"
 on:
   push:
     branches:
@@ -6,10 +9,50 @@ on:
   workflow_dispatch:
 jobs:
   registry:
-    uses: MyExampleOrg/.CI/.github/workflows/Registry.yml@master
-    with:
-      registers: MyExampleOrg/MyPublicRegistry
-      target_registry: MyExampleOrg/MyPublicRegistry
-    secrets:
-      token: ${{ secrets.REGISTRATOR_TOKEN_2 }}
-      
+    name: Update registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Git
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq git
+          git config --global user.name github-actions[bot]
+          git config --global user.email github-actions[bot]@users.noreply.github.com
+      - name: Add registry to environment
+        run: |
+          julia -e '
+            using Pkg;
+            Pkg.update()
+            Pkg.Registry.add(Pkg.RegistrySpec(; url = "${{ env.public_registry }}"))
+            Pkg.Registry.update()
+            '
+      - name: Updating package version in registers
+        run: |
+          julia -e '
+            using Pkg
+            Pkg.update()
+            Pkg.develop(url = ENV["REPOSITORY_URL"])
+            Pkg.add("LocalRegistry")
+            using LocalRegistry
+            using TOML
+    
+            name = first(split(basename("$(ENV["REPOSITORY_URL"])"), "."))
+    
+            LocalRegistry.register(
+              name,
+              registry = ENV["REGISTRY_URL"],
+              commit = true, push = true,
+              ignore_reregistration = true,
+            )
+  
+            path = joinpath(DEPOT_PATH[1], "dev", name)
+            toml = TOML.parsefile(joinpath(path, "Project.toml"))
+            version = VersionNumber(toml["version"])
+  
+            cd(path)
+            run(`git tag -f "v$version"`)
+            run(`git push --force origin "v$version"`)
+            '
+        shell: bash
+        env:
+          REGISTRY_URL: ${{ env.public_registry }}
+          REPOSITORY_URL: ${{ env.target_repository }}

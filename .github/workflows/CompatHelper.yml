@@ -1,4 +1,6 @@
 name: CompatHelper
+env:
+  public_registry: "https://github.com/MyExampleOrg/MyPublicRegistry.git"
 on:
   schedule:
     - cron: 0 0 * * *
@@ -10,11 +12,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v1
       - uses: julia-actions/cache@v1
-      - uses: MyExampleOrg/.CI/setup-registry@master
-        with:
-          token: ${{ github.token  }}
-          registers: MyExampleOrg/MyPublicRegistry
-      - run: |
+      - name: Add registry to environment
+        run: |
+          julia -e '
+            using Pkg;
+            Pkg.update()
+            Pkg.Registry.add(Pkg.RegistrySpec(; url = "${{ env.public_registry }}"))
+            Pkg.Registry.update()
+            '
+      - name: Configure CompatHelper
+        run: |
           julia -e '
           using Pkg
           Pkg.add("CompatHelper")
@@ -22,5 +29,4 @@ jobs:
           CompatHelper.main(use_existing_registries = true)
           '
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          COMPATHELPER_PRIV: ${{ secrets.DOCUMENTER_KEY }}
+          GITHUB_TOKEN: ${{ github.token }} # Token required to create a pull request to the same repository
