@@ -51,12 +51,12 @@ jobs:
             package_name == nothing && error("Invalid package name: ${{ env.target_repository }}")
             package_name = package_name[1]
 
-            package_dir = joinpath(DEPOT_PATH[1], "dev", pkg_name)
+            package_dir = joinpath(DEPOT_PATH[1], "dev", package_name)
             toml = TOML.parsefile(joinpath(path, "Project.toml"))
             version = VersionNumber(toml["version"])
     
             LocalRegistry.register(
-                pkg_name,
+                package_name,
                 registry = "${{ env.public_registry }}",
                 commit = true,
                 push = true,
