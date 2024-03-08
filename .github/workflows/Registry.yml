@@ -1,7 +1,6 @@
 name: Update registry
 
 env:
-    registrator_token: ${{ secrets.REGISTRATOR_TOKEN }}
     repository_path: ${{ github.repository }}
     registry_path: "MyExampleOrg/MyPublicRegistry"
 
@@ -34,7 +33,7 @@ jobs:
           julia -e '
             using Pkg
             Pkg.update()
-            Pkg.Registry.add(Pkg.RegistrySpec(; url = "https://github.com/${{ env.registry_path }}.git"))
+            Pkg.Registry.add(Pkg.RegistrySpec(; url = "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ env.registry_path }}.git"))
             Pkg.Registry.update()
             '
       - name: Updating package version in registers
@@ -52,19 +51,14 @@ jobs:
             package_name == nothing && error("Invalid package name: ${{ env.repository_path }}")
             package_name = package_name[1]
 
-            registry_name = basename("${{ env.registry_path }}")
-
             package_dir = joinpath(DEPOT_PATH[1], "dev", package_name)
-            registry_dir = joinpath(DEPOT_PATH[1], "registries", registry_name)
             project_toml = TOML.parsefile(joinpath(package_dir, "Project.toml"))
             version = VersionNumber(project_toml["version"])
     
             LocalRegistry.register(
                 package_name,
-                repo = "https://github.com/${{ github.repository }}.git"
+                repo = "https://github.com/${{ github.repository }}.git",
                 registry = "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ env.registry_path }}.git",
-                commit = true,
-                push = false,
                 ignore_reregistration = true,
             )
   
