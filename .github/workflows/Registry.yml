@@ -52,7 +52,7 @@ jobs:
             package_name == nothing && error("Invalid package name: ${{ env.repository_path }}")
             package_name = package_name[1]
 
-            registry_name = split("${{ env.registry_path }}", "/")[begin]
+            registry_name = basename("${{ env.registry_path }}")
 
             package_dir = joinpath(DEPOT_PATH[1], "dev", package_name)
             registry_dir = joinpath(DEPOT_PATH[1], "registries", registry_name)
@@ -63,7 +63,7 @@ jobs:
                 package_name,
                 registry = "https://github.com/${{ env.registry_path }}.git",
                 commit = true,
-                push = true,
+                # push = true,
                 ignore_reregistration = true,
             )
 
