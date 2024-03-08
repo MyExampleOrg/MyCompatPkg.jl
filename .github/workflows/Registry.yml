@@ -61,7 +61,7 @@ jobs:
     
             LocalRegistry.register(
                 package_name,
-                registry = "https://github.com/${{ env.registry_path }}.git",
+                registry = registry_name, #"https://github.com/${{ env.registry_path }}.git",
                 commit = true,
                 push = false,
                 ignore_reregistration = true,
