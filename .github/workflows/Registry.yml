@@ -1,8 +1,8 @@
 name: Update registry
 
 env:
-  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/${{ github.repository }}.git"
-  public_registry: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/MyExampleOrg/MyPublicRegistry.git"
+  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ github.repository }}.git"
+  public_registry: "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/MyExampleOrg/MyPublicRegistry.git"
 
 on:
   push:
@@ -41,7 +41,6 @@ jobs:
           julia -e '
             using Pkg
             
-            Pkg.update()
             Pkg.add("LocalRegistry")
             Pkg.develop(url = "${{ env.target_repository }}")
 
@@ -53,8 +52,8 @@ jobs:
             package_name = package_name[1]
 
             package_dir = joinpath(DEPOT_PATH[1], "dev", package_name)
-            toml = TOML.parsefile(joinpath(package_dir, "Project.toml"))
-            version = VersionNumber(toml["version"])
+            project_toml = TOML.parsefile(joinpath(package_dir, "Project.toml"))
+            version = VersionNumber(project_toml["version"])
     
             LocalRegistry.register(
                 package_name,
