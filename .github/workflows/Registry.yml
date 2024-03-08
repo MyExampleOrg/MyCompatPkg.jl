@@ -53,7 +53,7 @@ jobs:
             package_name = package_name[1]
 
             package_dir = joinpath(DEPOT_PATH[1], "dev", package_name)
-            toml = TOML.parsefile(joinpath(path, "Project.toml"))
+            toml = TOML.parsefile(joinpath(package_dir, "Project.toml"))
             version = VersionNumber(toml["version"])
     
             LocalRegistry.register(
@@ -64,7 +64,7 @@ jobs:
                 ignore_reregistration = true,
             )
   
-            cd(path)
+            cd(package_dir)
             run(`git tag -f "v$version"`)
             run(`git push --force origin "v$version"`)
             '
