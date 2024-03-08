@@ -46,6 +46,7 @@ jobs:
             Pkg.develop(url = "${{ env.target_repository }}")
 
             using LocalRegistry
+            using TOML
     
             package_name = match(r"^.*/(.*?)(\.jl)?(\.git)?$", "${{ env.target_repository }}")
             package_name == nothing && error("Invalid package name: ${{ env.target_repository }}")
