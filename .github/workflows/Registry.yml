@@ -61,14 +61,12 @@ jobs:
     
             LocalRegistry.register(
                 package_name,
-                registry = registry_name, #"https://github.com/${{ env.registry_path }}.git",
+                repo = "https://github.com/${{ github.repository }}.git"
+                registry = "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ env.registry_path }}.git",
                 commit = true,
                 push = false,
                 ignore_reregistration = true,
             )
-
-            run(Cmd(`git remote set-url origin "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ env.registry_path }}.git"`, dir = registry_dir))
-            run(Cmd(`git push -uf origin master`, dir = registry_dir))
   
             run(Cmd(`git tag -f "v$version"`, dir = package_dir))
             run(Cmd(`git push --force origin "v$version"`, dir = package_dir))
