@@ -63,7 +63,7 @@ jobs:
                 package_name,
                 registry = "https://github.com/${{ env.registry_path }}.git",
                 commit = true,
-                # push = true,
+                push = false,
                 ignore_reregistration = true,
             )
 
