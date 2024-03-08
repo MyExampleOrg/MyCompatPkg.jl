@@ -64,6 +64,6 @@ jobs:
                 ignore_reregistration = true,
             )
   
-            run(Cmd(`git tag -f "v$version"`, path = package_dir))
-            run(Cmd(`git push --force origin "v$version"`, path = package_dir))
+            run(Cmd(`git tag -f "v$version"`, dir = package_dir))
+            run(Cmd(`git push --force origin "v$version"`, dir = package_dir))
             '
