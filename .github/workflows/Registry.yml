@@ -1,17 +1,28 @@
 name: Update registry
+
 env:
-  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/${{ github.repository }}.git"
-  public_registry: "https://${{ secrets.REGISTRATOR_TOKEN_2 }}@github.com/MyExampleOrg/MyPublicRegistry.git"
+  target_repository: "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/${{ github.repository }}.git"
+  public_registry: "https://${{ secrets.REGISTRATOR_TOKEN }}@github.com/MyExampleOrg/MyPublicRegistry.git"
+
 on:
   push:
     branches:
       - master
   workflow_dispatch:
+    
 jobs:
   registry:
     name: Update registry
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: 1.9
+      - uses: julia-actions/cache@v1
       - name: Configure Git
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq git
@@ -20,7 +31,7 @@ jobs:
       - name: Add registry to environment
         run: |
           julia -e '
-            using Pkg;
+            using Pkg
             Pkg.update()
             Pkg.Registry.add(Pkg.RegistrySpec(; url = "${{ env.public_registry }}"))
             Pkg.Registry.update()
@@ -29,24 +40,28 @@ jobs:
         run: |
           julia -e '
             using Pkg
+            
             Pkg.update()
-            Pkg.develop(url = "${{ env.target_repository }}")
             Pkg.add("LocalRegistry")
-            using LocalRegistry
-            using TOML
-    
-            name = first(split(basename("${{ env.target_repository }}"), "."))
+            Pkg.develop(url = "${{ env.target_repository }}")
 
-            LocalRegistry.register(
-              name,
-              registry = "${{ env.public_registry }}",
-              commit = true, push = true,
-              ignore_reregistration = true,
-            )
-  
-            path = joinpath(DEPOT_PATH[1], "dev", name)
+            using LocalRegistry
+    
+            package_name = match(r"^.*/(.*?)(\.jl)?(\.git)?$", "${{ env.target_repository }}")
+            package_name == nothing && error("Invalid package name: ${{ env.target_repository }}")
+            package_name = package_name[1]
+
+            package_dir = joinpath(DEPOT_PATH[1], "dev", pkg_name)
             toml = TOML.parsefile(joinpath(path, "Project.toml"))
             version = VersionNumber(toml["version"])
+    
+            LocalRegistry.register(
+                pkg_name,
+                registry = "${{ env.public_registry }}",
+                commit = true,
+                push = true,
+                ignore_reregistration = true,
+            )
   
             cd(path)
             run(`git tag -f "v$version"`)
